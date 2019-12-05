@@ -1,0 +1,61 @@
+# An Elastic stack using external monitoring against two Logstash pipelines.
+
+version: '3.7'
+services:
+  # The "production" cluster, where imaginary business data is sent by Logstash.
+  elasticsearch-production:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.5.0
+    container_name: elasticsearch-production
+    ports: ['9200:9200']
+    networks: ['stack']
+    environment:
+      - discovery.type=single-node
+    volumes:
+      - ./elasticsearch-production/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+
+  # The monitoring cluster, where Metricbeat sends pipeline monitoring data.
+  elasticsearch-monitoring:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.5.0
+    container_name: elasticsearch
+    ports: ['9201:9200']
+    networks: ['stack']
+    environment:
+      - discovery.type=single-node
+      - ELASTIC_PASSWORD=booboo
+    volumes:
+      - ./elasticsearch-monitoring/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+
+  # Kibana, where we can observe the problem.
+  # http://localhost:5601/app/monitoring#/logstash/pipelines
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.5.0
+    container_name: kibana
+    ports: ['5601:5601']
+    networks: ['stack']
+    volumes:
+      - ./kibana/kibana.yml:/usr/share/kibana/config/kibana.yml
+
+  # Logstash running two pipelines.
+  logstash:
+    image: docker.elastic.co/logstash/logstash:7.5.0
+    container_name: logstash
+    networks: ['stack']
+    volumes:
+      - ./logstash/config:/usr/share/logstash/config
+      - ./logstash/pipeline:/usr/share/logstash/pipeline
+
+  # Metricbeat providing the external monitoring function.
+  metricbeat:
+    image: docker.elastic.co/beats/metricbeat:7.5.0
+    container_name: metricbeat
+    networks: ['stack']
+    volumes:
+      - ./metricbeat/metricbeat.yml:/usr/share/metricbeat/metricbeat.yml
+    # Metricbeat crashes if it comes up before Logstash, so run it in a retry
+    # loop.
+    command:
+      - /bin/bash
+      - -c
+      - while true; do metricbeat -e; sleep 1; done
+
+networks: {stack: {}}

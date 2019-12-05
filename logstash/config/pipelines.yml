@@ -1,0 +1,5 @@
+- pipeline.id: good
+  path.config: "/usr/share/logstash/pipeline/good.conf"
+
+- pipeline.id: bad
+  path.config: "/usr/share/logstash/pipeline/bad.conf"

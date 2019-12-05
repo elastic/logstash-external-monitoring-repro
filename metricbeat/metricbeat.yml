@@ -1,0 +1,27 @@
+#setup.template.settings:
+#setup.kibana:
+
+metricbeat.modules:
+  - module: system
+    enabled: false
+
+  - module: logstash
+    enabled: true
+    metricsets:
+      - node
+      - node_stats
+    period: 10s
+    hosts: ["logstash:9600"]
+    xpack.enabled: true
+
+output.elasticsearch:
+  enabled: true
+  hosts: ["elasticsearch:9200"]
+  username: elastic
+  password: booboo
+
+monitoring.enabled: true
+monitoring.elasticsearch:
+  hosts: ["elasticsearch:9200"]
+  username: elastic
+  password: booboo
