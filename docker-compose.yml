@@ -16,12 +16,12 @@ services:
   # The monitoring cluster, where Metricbeat sends pipeline monitoring data.
   elasticsearch-monitoring:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.5.0
-    container_name: elasticsearch
+    container_name: elasticsearch-monitoring
     ports: ['9201:9200']
     networks: ['stack']
     environment:
       - discovery.type=single-node
-      - ELASTIC_PASSWORD=booboo
+      - ELASTIC_PASSWORD=nomnom
     volumes:
       - ./elasticsearch-monitoring/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
 

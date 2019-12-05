@@ -16,12 +16,6 @@ metricbeat.modules:
 
 output.elasticsearch:
   enabled: true
-  hosts: ["elasticsearch:9200"]
+  hosts: ["elasticsearch-monitoring:9200"]
   username: elastic
-  password: booboo
-
-monitoring.enabled: true
-monitoring.elasticsearch:
-  hosts: ["elasticsearch:9200"]
-  username: elastic
-  password: booboo
+  password: nomnom
