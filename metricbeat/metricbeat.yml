@@ -14,6 +14,22 @@ metricbeat.modules:
     hosts: ["logstash:9600"]
     xpack.enabled: true
 
+  - module: elasticsearch
+    enabled: true
+    metricsets:
+      - ccr
+      - enrich
+      - cluster_stats
+      - index
+      - index_recovery
+      - index_summary
+      - ml_job
+      - node_stats
+      - shard
+    period: 10s
+    hosts: ["http://elasticsearch-production:9200"]
+    xpack.enabled: true
+
 output.elasticsearch:
   enabled: true
   hosts: ["elasticsearch-monitoring:9200"]
